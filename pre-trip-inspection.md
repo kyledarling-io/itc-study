@@ -1,14 +1,13 @@
-# Class 1 Pre-Trip Inspection — Valley Driving School order
+# Class 1 Pre-Trip Inspection
 
 > The Class 1 pre-trip is typically completed in **under 45 minutes**.
 
-A faithful transcription of the Valley Driving School *Class 1 Pre-Trip Inspection* sheet,
-in its original numbered sequence (steps 1–42). This is the source the in-app
-**Pre-Trip Cheatsheet** is built from. Wording and figures are kept as written on the
-sheet (e.g. front tread `3 mm`, drive/trailer tread `1.5 mm`, pushrod travel `1/2 – 3/4"`).
+The full Class 1 pre-trip in its working numbered sequence (steps 1–42) — the source the
+in-app **Pre-Trip Cheatsheet** is built from. Figures are kept as written (e.g. front tread
+`3 mm`, drive/trailer tread `1.5 mm`, pushrod travel `1/2 – 3/4"`).
 
-> Numbering follows the sheet exactly: steps **7, 8, 9** are the passenger-side repeats of
-> **4, 5, 6** (shown as "4 & 7", "5 & 8", "6 & 9"), and the sheet skips index **31**.
+> Numbering note: steps **7, 8, 9** are the passenger-side repeats of **4, 5, 6**
+> (shown as "4 & 7", "5 & 8", "6 & 9"), and index **31** is intentionally skipped.
 
 ---
 
@@ -160,7 +159,3 @@ sheet (e.g. front tread `3 mm`, drive/trailer tread `1.5 mm`, pushrod travel `1/
 40. **Trailer brake** — release both spring brakes, shift to first, gently release clutch, apply trailer hand valve brake.
 41. **Tractor brake** — release both spring brakes, shift to first, gently release clutch, apply tractor foot brake.
 42. **Trip inspection report** — complete and give to the ICBC Examiner.
-
----
-
-*Source: Valley Driving School — Class 1 Pre-Trip Inspection sheet (dated Mar 03 2022). Transcribed for personal study use; original is a published work of Valley Driving School.*
