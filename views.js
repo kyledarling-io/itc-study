@@ -320,11 +320,14 @@ const PT_ICONS={
   light:'<path d="M9 18h6M10 21h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>',
   circle:'<path d="M3 12a9 9 0 1 1 4.5 7.8"/><path d="M3 20v-5h5"/>',
   test:'<path d="M9 3h6M10 3v5l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/><path d="M7 15h10"/>',
+  truck:'<path d="M3 6h10v9H3z"/><path d="M13 9h4l3 3v3h-7z"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>',
+  trailer:'<rect x="2" y="6" width="15" height="9" rx="1"/><path d="M17 15h3"/><circle cx="9" cy="17" r="2"/><circle cx="14" cy="17" r="2"/>',
+  hitch:'<circle cx="7" cy="12" r="3"/><circle cx="17" cy="12" r="3"/><path d="M9.6 11h4.8M9.6 13h4.8"/>',
 };
 VIEWS.pretrip=function(){
   const v=el('<div class="view pt-view"></div>');
   v.appendChild(el('<h1 class="page-title">Pre-Trip Inspection Cheatsheet</h1>'));
-  v.appendChild(el('<p class="page-sub">Class 1 tractor-trailer + air brakes, in ICBC order. Work top to bottom and tap each item as you go — it saves automatically. Hit <b>Reset</b> to start a fresh run.</p>'));
+  v.appendChild(el('<p class="page-sub">Class 1 tractor-trailer + air brakes in Valley Driving School order — the full 42-step sequence, typically completed in under 45 minutes. Work top to bottom and tap each item as you go — it saves automatically. Hit <b>Reset</b> to start a fresh run.</p>'));
 
   let total=0; PRETRIP.forEach(p=>total+=p.items.length);
   const countDone=()=>{let d=0;PRETRIP.forEach(p=>p.items.forEach((_,i)=>{if(state.pretrip[p.id+'-'+i])d++;}));return d;};
