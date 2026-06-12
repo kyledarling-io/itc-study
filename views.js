@@ -324,10 +324,53 @@ const PT_ICONS={
   trailer:'<rect x="2" y="6" width="15" height="9" rx="1"/><path d="M17 15h3"/><circle cx="9" cy="17" r="2"/><circle cx="14" cy="17" r="2"/>',
   hitch:'<circle cx="7" cy="12" r="3"/><circle cx="17" cy="12" r="3"/><path d="M9.6 11h4.8M9.6 13h4.8"/>',
 };
+// Air-test pressure-trigger gauge (theme-aware) — pump down to each trigger, then rebuild.
+const PT_GAUGE=`<div class="pt-gauge">
+  <div class="pt-gauge-h">Air test · pressure triggers</div>
+  <div class="pt-gauge-s">Pump down to find each trigger, then rebuild.</div>
+  <svg viewBox="0 0 190 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Air pressure trigger gauge">
+    <!-- scale: y = 350 - psi*2.2  (135→53, 0→350). Colours come from CSS classes so the gauge themes. -->
+    <rect class="gf-tube" x="78" y="50" width="26" height="302" rx="6" stroke-width="1.2"/>
+    <rect class="gf-amber" x="78" y="53" width="26" height="66" opacity="0.18"/>
+    <rect class="gf-rose" x="78" y="251" width="26" height="55" opacity="0.16"/>
+    <!-- trigger ticks -->
+    <line class="gs-mut"   x1="70" y1="53"  x2="112" y2="53"  stroke-width="1"/>
+    <line class="gs-amber" x1="70" y1="119" x2="112" y2="119" stroke-width="1.6"/>
+    <line class="gs-mut"   x1="78" y1="152" x2="104" y2="152" stroke-width="0.9" stroke-dasharray="3 3"/>
+    <line class="gs-ink"   x1="70" y1="174" x2="112" y2="174" stroke-width="1.4"/>
+    <line class="gs-amber" x1="70" y1="218" x2="112" y2="218" stroke-width="2"/>
+    <line class="gs-rose"  x1="70" y1="251" x2="112" y2="251" stroke-width="1.2"/>
+    <line class="gs-rose"  x1="70" y1="306" x2="112" y2="306" stroke-width="1.2"/>
+    <!-- psi labels (right) -->
+    <g class="ptg-num">
+      <text x="116" y="57">135</text>
+      <text x="116" y="123" class="amber">105</text>
+      <text x="116" y="157" class="mut">90</text>
+      <text x="116" y="178">80</text>
+      <text x="116" y="222" class="amber">60</text>
+      <text x="116" y="255" class="rose">45</text>
+      <text x="116" y="310" class="rose">20</text>
+    </g>
+    <!-- meaning labels (left) -->
+    <g class="ptg-lab" text-anchor="end">
+      <text x="66" y="89">CUT-OUT</text>
+      <text x="66" y="178">CUT-IN</text>
+      <text x="66" y="214">WARNING</text>
+      <text x="66" y="282">DYNAMITE</text>
+    </g>
+    <!-- pump-down arrow -->
+    <path class="gs-mut" d="M30 96 L30 300" stroke-width="1.4" fill="none"/>
+    <path class="gf-mut" d="M30 306 l-3.4 -8 h6.8 z"/>
+    <!-- rebuild arrow: 50→90 in <3 min -->
+    <path class="gs-accent" d="M150 240 L150 154" stroke-width="2" fill="none"/>
+    <path class="gf-accent" d="M150 150 l-3.6 8 h7.2 z"/>
+    <text x="160" y="200" class="ptg-build" transform="rotate(90 160 200)" text-anchor="middle">50→90 · &lt;3:00</text>
+  </svg>
+</div>`;
 VIEWS.pretrip=function(){
   const v=el('<div class="view pt-view"></div>');
   v.appendChild(el('<h1 class="page-title">Pre-Trip Inspection Cheatsheet</h1>'));
-  v.appendChild(el('<p class="page-sub">Class 1 tractor-trailer + air brakes in Valley Driving School order — the full 42-step sequence, typically completed in under 45 minutes. Work top to bottom and tap each item as you go — it saves automatically. Hit <b>Reset</b> to start a fresh run.</p>'));
+  v.appendChild(el('<p class="page-sub">Class 1 tractor-trailer pre-trip + air-brake check, in walk-around order. Every line is a single check, numbered so you can call it out fast. Work top to bottom and tap each one as you go — it saves automatically. Aim for the full inspection in under 45 minutes; hit <b>Reset</b> for a fresh run.</p>'));
 
   let total=0; PRETRIP.forEach(p=>total+=p.items.length);
   const countDone=()=>{let d=0;PRETRIP.forEach(p=>p.items.forEach((_,i)=>{if(state.pretrip[p.id+'-'+i])d++;}));return d;};
@@ -350,24 +393,32 @@ VIEWS.pretrip=function(){
   function syncGlobal(){const d=countDone();const pct=total?Math.round(d/total*100):0;barFill.style.width=pct+'%';v.querySelector('#pt-done').textContent=d;}
   syncGlobal();
 
-  // air brake numbers reference
+  // air brake numbers reference — gauge + numbers, kept in view while you run the test
   const ref=el('<div class="pt-numbers"></div>');
   ref.appendChild(el('<div class="pt-num-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2"/></svg> Air brake numbers — keep these in view</div>'));
+  const main=el('<div class="pt-num-main"></div>');
+  main.appendChild(el(PT_GAUGE));
+  const cols=el('<div class="pt-num-cols"></div>');
   const segTest=el('<div class="pt-num-seg"><div class="pt-seg-lbl">Test sequence</div><div class="pt-num-grid"></div></div>');
   ABN_TEST.forEach(n=>segTest.querySelector('.pt-num-grid').appendChild(el(`<div class="pt-num seq"><div class="ptn-v">${n.v}</div><div class="ptn-k">${n.k}</div><div class="ptn-d">${n.d}</div></div>`)));
   const segLim=el('<div class="pt-num-seg"><div class="pt-seg-lbl">Limits &amp; thresholds</div><div class="pt-num-grid"></div></div>');
   ABN_LIMITS.forEach(n=>segLim.querySelector('.pt-num-grid').appendChild(el(`<div class="pt-num"><div class="ptn-v">${n.v}</div><div class="ptn-k">${n.k}</div><div class="ptn-d">${n.d}</div></div>`)));
-  ref.appendChild(segTest);ref.appendChild(segLim);
+  cols.appendChild(segTest);cols.appendChild(segLim);
+  main.appendChild(cols);
+  ref.appendChild(main);
   v.appendChild(ref);
 
-  // phases
+  // phases — items are numbered sequentially across the whole walk-around (no gaps, no skips)
   const phaseNodes=[];
+  let stepNo=0;
   PRETRIP.forEach(phase=>{
+    const first=stepNo+1, last=stepNo+phase.items.length;
+    const range=phase.items.length>1?`${first}–${last}`:`${first}`;
     const done0=phase.items.filter((_,i)=>state.pretrip[phase.id+'-'+i]).length;
     const node=el(`<div class="pt-phase open ${done0===phase.items.length?'phase-complete':''}">
       <div class="pt-phase-head">
         <span class="pt-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${PT_ICONS[phase.icon]||''}</svg></span>
-        <div class="pt-ph-title"><b>${phase.t}</b>${phase.note?`<span>${phase.note}</span>`:''}</div>
+        <div class="pt-ph-title"><b><span class="pt-ph-range">${range}</span>${phase.t}</b>${phase.note?`<span>${phase.note}</span>`:''}</div>
         <span class="pt-ph-count">${done0}/${phase.items.length}</span>
         <svg class="pt-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
       </div>
@@ -377,10 +428,15 @@ VIEWS.pretrip=function(){
     const countEl=node.querySelector('.pt-ph-count');
     head.addEventListener('click',()=>node.classList.toggle('open'));
     const syncPhase=()=>{const pd=phase.items.filter((_,i)=>state.pretrip[phase.id+'-'+i]).length;countEl.textContent=pd+'/'+phase.items.length;node.classList.toggle('phase-complete',pd===phase.items.length);};
+    let lastGrp=null;
     phase.items.forEach((it,i)=>{
+      const n=++stepNo;
+      if(it.grp && it.grp!==lastGrp){ body.appendChild(el(`<div class="pt-grp">${it.grp}</div>`)); lastGrp=it.grp; }
+      else if(!it.grp){ lastGrp=null; }
       const id=phase.id+'-'+i, on=!!state.pretrip[id];
       const isAb = it.ab || phase.allAb;
       const row=el(`<div class="pt-check ${on?'on':''}">
+        <span class="pt-step">${n}</span>
         <div class="box">${ICONS.check}</div>
         <div class="pt-lab"><div class="pt-lab-t">${it.t}${isAb?'<span class="ab-tag">AIR</span>':''}</div><div class="pt-lab-d">${it.d}</div></div></div>`);
       row.addEventListener('click',()=>{state.pretrip[id]=!state.pretrip[id];save();row.classList.toggle('on',!!state.pretrip[id]);syncPhase();syncGlobal();});
